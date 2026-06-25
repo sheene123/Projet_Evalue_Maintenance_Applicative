@@ -23,10 +23,36 @@ jobs:
           pip install -r requirements.txt
 
       - name: Vérifier le style (flake8)
-        run: flake8 . --max-line-length=100
+        shell: bash
+        run: |
+          set -o pipefail
+          echo "::group::flake8"
+          flake8 . --max-line-length=100 2>&1 | tee flake8.log
+          echo "::endgroup::"
 
       - name: Vérifier le format (black)
-        run: black --check .
+        shell: bash
+        run: |
+          set -o pipefail
+          echo "::group::black"
+          black --check --diff . 2>&1 | tee black.log
+          echo "::endgroup::"
 
       - name: Lancer les tests (pytest)
-        run: pytest -v
+        shell: bash
+        run: |
+          set -o pipefail
+          echo "::group::pytest"
+          pytest -v --tb=long 2>&1 | tee pytest.log
+          echo "::endgroup::"
+
+      - name: Sauvegarder les logs (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-ci
+          path: |
+            flake8.log
+            black.log
+            pytest.log
+          if-no-files-found: warn
