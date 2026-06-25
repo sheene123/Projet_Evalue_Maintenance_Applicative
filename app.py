@@ -12,6 +12,9 @@ if "from_currency" not in st.session_state:
     st.session_state.from_currency = currencies[0]
 if "to_currency" not in st.session_state:
     st.session_state.to_currency = currencies[1]
+# Maintenance évolutive : historique des conversions de la session.
+if "history" not in st.session_state:
+    st.session_state.history = []
 
 
 def swap_currencies():
@@ -20,6 +23,10 @@ def swap_currencies():
         st.session_state.to_currency,
         st.session_state.from_currency,
     )
+
+
+def clear_history():
+    st.session_state.history = []
 
 
 amount = st.number_input("Montant :", min_value=0.0, format="%.2f")
@@ -41,4 +48,13 @@ if st.button("Convertir"):
         if result is None:
             st.error("Le montant doit être strictement positif.")
         else:
-            st.success(f"{amount:.2f} {from_currency} = {result:.2f} {to_currency}")
+            line = f"{amount:.2f} {from_currency} = {result:.2f} {to_currency}"
+            st.success(line)
+            st.session_state.history.append(line)
+
+# Maintenance évolutive : affichage de l'historique des conversions.
+if st.session_state.history:
+    st.subheader("Historique des conversions")
+    for entry in reversed(st.session_state.history):
+        st.write(entry)
+    st.button("Effacer l'historique", on_click=clear_history)
