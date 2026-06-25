@@ -33,3 +33,10 @@ def test_convert_negative_amount_returns_none():
 def test_convert_unknown_currency_raises():
     with pytest.raises(KeyError):
         convert(10, "EUR", "XXX", {"EUR": 1})
+
+
+def test_cas_qui_echoue_demo():
+    # Cas volontairement FAUX pour démontrer l'échec du pipeline CI.
+    # 10 EUR -> USD vaut 11.0, on affirme volontairement une valeur erronée.
+    rates = {"EUR": 1, "USD": 1.1}
+    assert convert(10, "EUR", "USD", rates) == 999
