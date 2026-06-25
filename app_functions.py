@@ -15,7 +15,12 @@ FALLBACK_RATES = {
 def convert(amount, from_currency, to_currency, rates):
     """Convertit un montant d'une devise source vers une devise cible.
 
-    Le calcul passe par la base commune des taux : on ramène le montant en
-    devise de base puis on le reconvertit vers la devise cible.
+    Maintenance corrective :
+    - renvoie ``None`` si le montant est nul ou négatif ;
+    - renvoie le montant inchangé si les deux devises sont identiques.
     """
+    if amount is None or amount <= 0:
+        return None
+    if from_currency == to_currency:
+        return amount
     return amount * rates[to_currency] / rates[from_currency]
