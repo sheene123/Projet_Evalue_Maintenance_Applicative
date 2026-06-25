@@ -9,6 +9,8 @@ FALLBACK_RATES = {
     "EUR": 1.0,
     "USD": 1.1,
     "JPY": 130.0,
+    "GBP": 0.85,
+    "CAD": 1.45,
 }
 
 
