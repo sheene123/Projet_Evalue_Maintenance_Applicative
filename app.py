@@ -1,10 +1,18 @@
 import streamlit as st
 
-from app_functions import FALLBACK_RATES, convert
+from app_functions import convert, get_rates
+
+# Devises proposées dans l'interface (l'API en renvoie beaucoup plus).
+SUPPORTED = ["EUR", "USD", "JPY", "GBP", "CAD"]
 
 st.title("Convertisseur de devises")
 
-rates = FALLBACK_RATES
+# Maintenance adaptative : taux récupérés via une API externe (avec repli).
+api_key = st.text_input("Clé API exchangerate-api.com (optionnel)", type="password")
+all_rates, source = get_rates(base="EUR", api_key=api_key)
+st.caption(f"Source des taux : {source}")
+
+rates = {c: all_rates[c] for c in SUPPORTED if c in all_rates}
 currencies = list(rates.keys())
 
 # Valeurs par défaut des devises (nécessaires pour le bouton d'inversion).
